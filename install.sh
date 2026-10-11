@@ -151,7 +151,11 @@ main() (
         # Re-run = fresh, clean copy of hq (old one kept aside); never merges a stale or stuck copy.
         mv "$HOME/.local/share/chezmoi" "$HOME/.local/share/chezmoi.old-$(date +%Y%m%d%H%M%S)"
     fi
-    chezmoi init --apply --force "https://github.com/$KIT_USER/hq.git" </dev/tty
+    # Lean clone: only essentials (~2 MB); sessions and backups download per project, on demand.
+    hq="$HOME/.local/share/chezmoi"
+    git clone -q --filter=blob:none --sparse "https://github.com/$KIT_USER/hq.git" "$hq"
+    git -C "$hq" sparse-checkout set --cone kit shared dot_config registry vault/env
+    chezmoi init --apply --force </dev/tty
     printf '%s\n' 'kit setup complete.'
 )
 

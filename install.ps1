@@ -59,7 +59,11 @@
         # Re-run = fresh, clean copy of hq (old one kept aside); never merges a stale or stuck copy.
         Move-Item "$HOME/.local/share/chezmoi" "$HOME/.local/share/chezmoi.old-$(Get-Date -Format yyyyMMddHHmmss)"
     }
-    & chezmoi init --apply --force "https://github.com/$User/hq.git"
+    # Lean clone: only essentials (~2 MB); sessions and backups download per project, on demand.
+    $hq = "$HOME/.local/share/chezmoi"
+    & git clone -q --filter=blob:none --sparse "https://github.com/$User/hq.git" $hq
+    & git -C $hq sparse-checkout set --cone kit shared dot_config registry vault/env
+    & chezmoi init --apply --force
     if ($LASTEXITCODE -ne 0) { throw 'chezmoi setup failed; fix the reported error and rerun.' }
     Write-Host 'kit setup complete.'
 }
