@@ -56,7 +56,15 @@
     if ($LASTEXITCODE -ne 0) { throw 'GitHub Git credential setup failed.' }
 
     if (Test-Path -LiteralPath "$HOME/.local/share/chezmoi" -PathType Container) {
-        & chezmoi update --apply
+        # Self-heal hq: abort stuck rebases/merges; on conflict GitHub's version wins.
+        $hq = "$HOME/.local/share/chezmoi"
+        & git -C $hq rebase --abort 2>$null; & git -C $hq merge --abort 2>$null
+        & git -C $hq add -A; & git -C $hq commit -qm "kit: local state before update" 2>$null
+        & git -C $hq fetch -q origin
+        & git -C $hq rebase -q origin/main 2>$null
+        if ($LASTEXITCODE -ne 0) { & git -C $hq rebase --abort 2>$null; & git -C $hq merge -q --no-edit -X theirs origin/main }
+        & git -C $hq push -q origin HEAD:main 2>$null
+        & chezmoi apply --force
     } else {
         & chezmoi init --apply "https://github.com/$User/hq.git"
     }

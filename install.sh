@@ -148,7 +148,18 @@ main() (
     fi
     gh auth setup-git --hostname github.com </dev/tty
     if [ -d "$HOME/.local/share/chezmoi" ]; then
-        chezmoi update --apply </dev/tty
+        # Self-heal hq: finish/abort stuck rebases or merges; on conflict GitHub's version wins.
+        hq="$HOME/.local/share/chezmoi"
+        git -C "$hq" rebase --abort >/dev/null 2>&1 || true
+        git -C "$hq" merge --abort >/dev/null 2>&1 || true
+        git -C "$hq" add -A && git -C "$hq" commit -qm "kit: local state before update" >/dev/null 2>&1 || true
+        git -C "$hq" fetch -q origin
+        if ! git -C "$hq" rebase -q origin/main >/dev/null 2>&1; then
+            git -C "$hq" rebase --abort >/dev/null 2>&1 || true
+            git -C "$hq" merge -q --no-edit -X theirs origin/main
+        fi
+        git -C "$hq" push -q origin HEAD:main >/dev/null 2>&1 || true
+        chezmoi apply --force </dev/tty
     else
         chezmoi init --apply "https://github.com/$KIT_USER/hq.git" </dev/tty
     fi
