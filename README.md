@@ -5,16 +5,16 @@ repo installs Git, GitHub CLI, chezmoi, uv, and Node.js, signs in to GitHub, the
 applies your private `<user>/hq` repo. hq installs Claude Code, Codex, and the
 `kit` CLI and restores your configuration and encrypted vault.
 
-**Windows (PowerShell, with winget / App Installer available):**
-
-```powershell
-irm https://raw.githubusercontent.com/viftode4/kit/main/install.ps1 | iex
-```
-
-**macOS / Linux (terminal, or SSH with `ssh -t`):**
+**Mac / Linux — open Terminal, paste, Enter:**
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/viftode4/kit/main/install.sh | sh
+```
+
+**Windows — open PowerShell, paste, Enter:**
+
+```powershell
+irm https://raw.githubusercontent.com/viftode4/kit/main/install.ps1 | iex
 ```
 
 Approve GitHub access in your browser (a headless server prints a device code),
