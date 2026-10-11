@@ -1,9 +1,11 @@
 # kit
 
-One command brings your Claude Code + Codex setup to a new machine. This public
-repo installs Git, GitHub CLI, chezmoi, uv, and Node.js, signs in to GitHub, then
-applies your private `<user>/hq` repo. hq installs Claude Code, Codex, and the
-`kit` CLI and restores your configuration and encrypted vault.
+**Your dev environment, everywhere. For you and your agents.**
+
+Sit down at any machine, paste one line, approve GitHub, type your password —
+and you're back in your workspace: Claude Code and Codex logged in and configured
+your way, every project one sentence away, secrets in place, and the session you
+left on your other machine ready to `/resume`.
 
 **Mac / Linux: open Terminal, paste, Enter:**
 
@@ -17,28 +19,31 @@ curl -fsSL https://raw.githubusercontent.com/viftode4/kit/main/install.sh | sh
 irm https://raw.githubusercontent.com/viftode4/kit/main/install.ps1 | iex
 ```
 
-Approve GitHub access in your browser (a headless server prints a device code),
-then enter your vault password once when hq asks. Package installation may also
-require administrator approval or your sudo password. macOS uses Homebrew;
-Debian/Ubuntu support root or sudo; Fedora is best effort. A minimal Linux image
-needs curl installed to run the one-liner.
+## What you get
 
-Rerun the same command to update and apply an existing
-`~/.local/share/chezmoi` checkout. Existing tools are reused; the Unix installer
-upgrades Node.js below 20 (NodeSource 22 on Debian/Ubuntu, LTS 24 on macOS).
+- **Same setup on every machine.** Claude Code + Codex config, skills, instructions — synced.
+- **Pick up where you left off.** Close a session on your laptop, `/resume` it on your desktop.
+  Unsaved code follows you too (as a private `wip/<machine>` branch — your branches are never touched).
+- **Projects on demand.** Ask your agent *"get polymarket"* — cloned, secrets in place, ready.
+- **Always current.** On every session start: clean projects fast-forward from GitHub; anything
+  behind, diverged, or changed on another machine is reported to you and your agent.
+- **Secrets without the copy-paste.** `.env` files live encrypted in your private repo and merge
+  key-by-key across machines — no `.env` ever lands in a project repo.
+- **Agents use it themselves.** You just talk to Claude or Codex; they call `kit` when they need a
+  project, a secret, or to save. Nothing to memorize.
 
-**Bring your own setup — template coming soon.** Create a private `<you>/hq`
-from the forthcoming template and configure your own encrypted vault. The default
-owner is `viftode4`; override it before running the installer:
+## How it works
 
-```powershell
-$env:KIT_USER = 'your-github-user' # then run the Windows one-liner
-```
+Two repos on your GitHub:
 
-```sh
-curl -fsSL https://raw.githubusercontent.com/viftode4/kit/main/install.sh | KIT_USER=your-github-user sh
-```
+| | |
+|---|---|
+| `kit` (this one, public) | the one-line installers |
+| `<you>/hq` (private) | your config, encrypted vault, synced sessions, and the `kit` CLI — via [chezmoi](https://chezmoi.io) + [age](https://age-encryption.org) |
 
-`KIT_SERVER`, if set, is passed through to hq for its server-specific setup.
-Changing `KIT_USER` does not switch an existing chezmoi checkout.
-This repo contains no vault, credentials, or private configuration.
+GitHub login gates access; your vault password unlocks the secrets. Nothing secret is ever public.
+
+## Make your own
+
+Template for your own `hq` is coming soon. Then: create `<you>/hq` from it and run the
+one-liner with `KIT_USER=<you>`.
