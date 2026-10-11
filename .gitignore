@@ -1,0 +1,9 @@
+# Local agent output and credentials never belong in this public bootstrap repo.
+.codex-run.log
+*.log
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+__pycache__/
